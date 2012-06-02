@@ -1,0 +1,109 @@
+<html>
+	<head>
+		<meta charset="utf-8">
+		<link rel="stylesheet" type="text/css" href="css/main.css" media="screen" />
+		<link rel="stylesheet" type="text/css" href="css/pepper-grinder/jquery-ui-1.8.20.custom.css" media="screen" />
+		<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="js/jquery-ui-1.8.20.custom.min.js"></script>
+		<script type="text/javascript" src="js/d3.v2.js"></script>
+	</head>
+	<body>
+		<div id="body">
+			<div id="route-title">Explore Canberra</div>
+		</div>
+		
+<script>
+var width = $('body').width(),
+    height = $('body').height(),
+    centered;
+
+var projection = d3.geo.azimuthal()
+    .scale(120000)
+    .origin([149.24, -35.44])
+    .mode("orthographic");
+    // .translate([200, -100]);
+
+// d3.geo.albersUsa()
+//     .scale(width)
+//     .translate([0, 0]);
+
+var path = d3.geo.path()
+    .projection(projection);
+
+var svg = d3.select("#body").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+svg.append("rect")
+    .attr("class", "background")
+    .attr("width", width)
+    .attr("height", height)
+    .on("click", suburbClick);
+
+// this is the starting position - this isn't modified by the system
+var frame = svg.append("g") // rotate(10)
+    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+	//.attr("transform", "translate(0,0)");
+
+// this frame is for applying transformations
+var transforming = frame.append("g");
+
+var states = transforming.append("g")
+    .attr("id", "states");
+
+var routes = transforming.append("g")
+    .attr("id", "routes");
+
+d3.json("act-suburbs.json", function(json) {
+  states.selectAll("path")
+      .data(json.features)
+    .enter().append("path")
+      .attr("d", path)
+      .on("click", suburbClick);
+});
+
+d3.json("bus-routes.json", function(json) {
+  routes.selectAll("path")
+      .data(json.features)
+    .enter().append("path")
+      .attr("d", path)
+      .attr("name", function(d) { return d.properties.name; })
+      .on("click", pickRoute);
+});
+
+var poi;
+var poiLookup;
+
+d3.json("points-of-interest.json", function(json) {
+	poi = json;
+});
+
+function suburbClick(d) {
+  var x = 0,
+      y = 0,
+      k = 1;
+
+  if(d && centered !== d) {
+    var centroid = path.centroid(d);
+    x = -centroid[0];
+    y = -centroid[1];
+    k = 2;
+    centered = d;
+  } else {
+    centered = null;
+  }
+
+  transforming.transition()
+      .duration(1000)
+      .attr("transform", "scale(" + k + ")translate(" + x + "," + y + ")")
+      .style("stroke-width", 1.5 / k + "px");
+}
+
+function pickRoute(d) {
+	$("#route-title").text("Route "+d.properties.name);
+}
+
+</script>
+	</body>
+</html>
+
