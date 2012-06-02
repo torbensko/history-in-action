@@ -21,14 +21,14 @@
 			</div>
 			<div id="year-picker-frame">
 				<div id="year-picker">
-					<input type="radio" id="y1" name="years" value="0" checked="checked"/><label for="y1">All</label>
+					<input type="radio" id="y1" name="years" value="all" checked="checked"/><label for="y1">All</label>
 					<input type="radio" id="y2" name="years" value="2000" /><label for="y2">2000's</label>
 					<input type="radio" id="y3" name="years" value="1990" /><label for="y3">1990's</label>
 					<input type="radio" id="y4" name="years" value="1980" /><label for="y4">1980's</label>
 					<input type="radio" id="y5" name="years" value="1970" /><label for="y5">1970's</label>
 					<input type="radio" id="y6" name="years" value="1960" /><label for="y6">1960's</label>
 					<input type="radio" id="y7" name="years" value="1950" /><label for="y7">1950's</label>
-					<input type="radio" id="y8" name="years" value="-1" /><label for="y8">pre 1950's</label>
+					<input type="radio" id="y8" name="years" value="pre" /><label for="y8">pre 1950's</label>
 				</div>
 			</div>
 			<div id="centenary">
@@ -117,6 +117,8 @@ d3.json("data/poi-lookup.json", function(json) {
 
 var selectedSuburb = false;
 var selectedRoute = false;
+var yearFilterMin = 0;
+var yearFilterMax = 2020;
 
 function suburbClick(d) {
 	var x = 0,
@@ -178,7 +180,9 @@ function performPOISelection(forceClear) {
 		// make a list of applicable IDs for each segment
 		var poisPerSeg = [];
 		$(poiLookup).each(function(index, val) {
-			if(val.route_id == selectedRoute) {
+			if(val.route_id == selectedRoute && 
+					val.year >= yearFilterMin && val.year <= yearFilterMax) {
+						
 				var seg = val.segment-1;
 				if(poisPerSeg[seg] == undefined)
 					poisPerSeg[seg] = [];
@@ -203,7 +207,7 @@ function performPOISelection(forceClear) {
 				attempts++;
 				var i = randInt(poiLookup.length);
 				// to do: perform the year check
-				if(poiLookup[i].year < 3000)
+				if(poiLookup[i].year >= yearFilterMin && poiLookup[i].year <= yearFilterMax)
 					selected = poiLookup[i].barcode;
 			}
 		}
@@ -211,9 +215,10 @@ function performPOISelection(forceClear) {
 			poiIDs = [selected];
 		clear = false;
 	}
+	clear = clear || (forceClear === true);
 	
 	// clear the previous markers
-	if(clear || (forceClear === true)) {
+	if(clear) {
 		$("#markers").children().remove();
 		$("#poi-details").children().remove();
 	} else if($("#poi-details").children().length >= MAX_ENTRIES) {
@@ -238,8 +243,7 @@ function performPOISelection(forceClear) {
 			nextPOI.index = i+1+idOffset;
 			nextPOI.name = id;
 			selectedPOIs.push(nextPOI);
-			if(!clear)
-				idOffset++;
+			idOffset++;
 		}
 	});
 	
