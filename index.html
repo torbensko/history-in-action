@@ -11,6 +11,7 @@
 	<body>
 		<div id="body">
 			<div id="route-title">Explore Canberra</div>
+			<div id="poi-details"></div>
 		</div>
 		
 <script>
@@ -160,7 +161,31 @@ function pickRoute(d) {
 				return (d.id < 10) ? "translate(-4,5)" : "translate(-9,5)";
 			}).text(function(d) { return d.id; });
 	
+	// clear out the previous stuff
+	$("#poi-details").children().remove();
 	// draw the details on the left
+	$(selectedPOIs).each(function(i, p) {
+		$("#poi-details").append(
+			$("<div>")
+				.addClass("doi-frame")
+				.append(
+					$("<img>")
+						.addClass("doi-id")
+						.text(p.id)
+				).append(
+					$("<img>")
+						.addClass("doi-image")
+						.attr("src", p.url)
+				).append(
+					$("<div>")
+						.addClass("doi-title")
+						.text(p.title)
+				).append(
+					$("<div>")
+						.css("clear", "both")
+				)
+		);
+	});
 }
 
 </script>
