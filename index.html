@@ -40,6 +40,7 @@
 
 var MAX_ENTRIES = 5;
 var idle = true;
+var subtitleText = $("#route-title").text();
 
 var width = $('body').width(),
     height = $('body').height(),
@@ -114,10 +115,16 @@ d3.json("data/poi-lookup.json", function(json) {
 	poiLookup = json;
 });
 
+var selectedSuburb = false;
+var selectedRoute = false;
+
 function suburbClick(d) {
 	var x = 0,
 	y = 0,
 	k = 1;
+	
+	selectedSuburb = false;
+	selectedRoute = false;
 
 	if(d && centered !== d) {
 		var centroid = path.centroid(d);
@@ -125,10 +132,14 @@ function suburbClick(d) {
 		y = -centroid[1];
 		k = 2;
 		centered = d;
+		// to do: get a real index
+		selectedSuburb = 2902;
+	
 	} else {
 		centered = null;
 	}
-
+	performPOISelection(true);
+	
 	transforming.transition()
 			.duration(1000)
 			.attr("transform", "scale(" + k + ")translate("+x/3+","+y+")")
@@ -143,54 +154,97 @@ function randInt(max) {
 }
 
 function pickRoute(d) {
-	$("#route-title").text("Route "+d.properties.name);
-	
-	// look up a list of applicable POI ids
-	// make a list of applicable IDs for each segment
-	var poisPerSeg = [];
-	$(poiLookup).each(function(index, val) {
-		if(val.route_id == d.properties.name) {
-			var seg = val.segment-1;
-			if(poisPerSeg[seg] == undefined)
-				poisPerSeg[seg] = [];
-			poisPerSeg[seg].push(val.barcode);
-		}
-	}); 
-	// pick an ID for each segment
-	var poiIDs = [];
-	$(poisPerSeg).each(function(index, segIDs) {
-		poiIDs.push(segIDs[randInt(segIDs.length)]);
-	});
-	
-	idle = false;
-	
-	showPOIs(poiIDs);
+	selectedSuburb = false;
+	selectedRoute = d.properties.name;
+	performPOISelection(true);
 }
 
-
-// @arg append	If TRUE the image will be added to the existing, whilst honouring the
-//				MAX_ENTRIES
-function showPOIs(poiIDs, append) {
+var idOffset = 0;
+function performPOISelection(forceClear) {
+	var clear = true;
+	
+	// the next POIs to draw
+	var poiIDs = [];
+	
+	// is a suburb chosen?
+	if(selectedSuburb != false) {
+		$("#route-title").text("Events that occurred in BLAH");
+		// to do: grab some suburb events and show them
+		poiIDs = [78147];
+		
+	} else if(selectedRoute != false) {
+		$("#route-title").text("Events along route "+selectedRoute);
+	
+		// make a list of applicable IDs for each segment
+		var poisPerSeg = [];
+		$(poiLookup).each(function(index, val) {
+			if(val.route_id == selectedRoute) {
+				var seg = val.segment-1;
+				if(poisPerSeg[seg] == undefined)
+					poisPerSeg[seg] = [];
+				poisPerSeg[seg].push(val.barcode);
+			}
+		}); 
+		// pick an ID for each segment	
+		$(poisPerSeg).each(function(index, segIDs) {
+			poiIDs.push(segIDs[randInt(segIDs.length)]);
+		});
+		
+	// otherwise, must be idle
+	} else {
+		$("#route-title").text(subtitleText);
+	
+		// pick a random suburb to show
+		if(poiLookup != undefined && poiLookup.length > 0) {
+			var selected = false;
+			var attempts = 0;
+			while(selected == false && attempts < 100) {
+				// before we forget
+				attempts++;
+				var i = randInt(poiLookup.length);
+				// to do: perform the year check
+				if(poiLookup[i].year < 3000)
+					selected = poiLookup[i].barcode;
+			}
+		}
+		if(selected)
+			poiIDs = [selected];
+		clear = false;
+	}
+	
+	// clear the previous markers
+	if(clear || (forceClear === true)) {
+		$("#markers").children().remove();
+		$("#poi-details").children().remove();
+	} else if($("#poi-details").children().length >= MAX_ENTRIES) {
+		// kill the both the text and circle
+		$("#markers").children().first().fadeOut(function() { $(this).remove(); });
+		$("#markers").children().first().fadeOut(function() { $(this).remove(); });
+		$("#poi-details").children().first().slideUp(1000, function() { $(this).remove(); });
+	}
+	
+	if(!(poiIDs != undefined && poiIDs.length > 0))
+		return;
 
 	var selectedPOIs = [];
 	// get the POI data
 	$(poiIDs).each(function(i, id) {
 		var nextPOI = poi[id];
-		// transform into our coordinate space
-		nextPOI.coordinates = projection(nextPOI.coordinates);
-		nextPOI.index = i+1;
-		nextPOI.name = id;
-		selectedPOIs.push(nextPOI);
+		if(nextPOI != undefined) {
+			if(clear)
+				idOffset = 0;
+			// transform into our coordinate space
+			nextPOI.coordinates = projection(nextPOI.coordinates);
+			nextPOI.index = i+1+idOffset;
+			nextPOI.name = id;
+			selectedPOIs.push(nextPOI);
+			if(!clear)
+				idOffset++;
+		}
 	});
 	
-	// clear the previous markers
-	if(append !== true) {
-		$("#markers").children().remove();
-		$("#poi-details").children().remove();
-	} else if($("#poi-details").children().length >= MAX_ENTRIES) {
-		$("#markers").children().first().fadeOut(function() { $(this).remove(); });
-		$("#poi-details").children().first().slideUp(1000, function() { $(this).remove(); });
-	}
+	if(!(selectedPOIs != undefined && selectedPOIs.length > 0))
+		return;
 	
 	// draw the points on the map
 	markers.data(selectedPOIs)

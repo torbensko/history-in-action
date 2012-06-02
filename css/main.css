@@ -88,7 +88,9 @@ svg {
 
 #markers circle {
 	fill: #ffb901;
-	color: white;
+}
+#markers text {	
+	fill: white;
 }
 
 
