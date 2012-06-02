@@ -10,7 +10,10 @@
 	</head>
 	<body>
 		<div id="body">
-			<div id="route-title">Explore Canberra</div>
+			<div id="title">History<span style="font-size:60%">-in-</span><b>ACTION</b></div>
+			<div id="subtitle">Come celebrate Canberra's rich history!</div>
+			
+			<div id="route-title">Click a bus route or suburb to explore...</div>
 			<div id="poi-details"></div>
 			<div id="year-picker-frame">
 				<div id="year-picker">
@@ -24,9 +27,16 @@
 					<input type="radio" id="y8" name="years" value="-1" /><label for="y8">pre 1950's</label>
 				</div>
 			</div>
+			<div id="centenary">
+				<img src="images/centenary.png" />
+			</div>
 		</div>
 		
 <script>
+
+var MAX_ENTRIES = 5;
+var idle = true;
+
 var width = $('body').width(),
     height = $('body').height(),
     centered;
@@ -141,24 +151,43 @@ function pickRoute(d) {
 				poisPerSeg[seg] = [];
 			poisPerSeg[seg].push(val.barcode);
 		}
-	});
+	}); 
 	// pick an ID for each segment
 	var poiIDs = [];
 	$(poisPerSeg).each(function(index, segIDs) {
 		poiIDs.push(segIDs[randInt(segIDs.length)]);
 	});
+	
+	idle = false;
+	
+	showPOIs(poiIDs);
+}
+
+
+// @arg append	If TRUE the image will be added to the existing, whilst honouring the
+//				MAX_ENTRIES
+function showPOIs(poiIDs, append) {
+
 	var selectedPOIs = [];
 	// get the POI data
 	$(poiIDs).each(function(i, id) {
 		var nextPOI = poi[id];
 		// transform into our coordinate space
 		nextPOI.coordinates = projection(nextPOI.coordinates);
-		nextPOI.id = i+1;
+		nextPOI.index = i+1;
+		nextPOI.name = id;
 		selectedPOIs.push(nextPOI);
 	});
 	
 	// clear the previous markers
-	$("#markers").children().remove();
+	if(append !== true) {
+		$("#markers").children().remove();
+		$("#poi-details").children().remove();
+	} else if($("#poi-details").children().length >= MAX_ENTRIES) {
+		$("#markers").children().first().fadeOut(function() { $(this).remove(); });
+		$("#poi-details").children().first().slideUp(1000, function() { $(this).remove(); });
+	}
+	
 	// draw the points on the map
 	markers.data(selectedPOIs)
 		.append("circle")
@@ -171,24 +200,23 @@ function pickRoute(d) {
 	        .attr("y", function(d) { return d.coordinates[1]; })
 			.attr("transform", function(d) { 
 				// a dirty fix to handle the bad placement of text
-				return (d.id < 10) ? "translate(-4,5)" : "translate(-9,5)";
-			}).text(function(d) { return d.id; });
+				return (d.index < 10) ? "translate(-4,5)" : "translate(-9,5)";
+			}).text(function(d) { return d.index; });
 	
-	// clear out the previous stuff
-	$("#poi-details").children().remove();
 	// draw the details on the left
 	$(selectedPOIs).each(function(i, p) {
 		$("#poi-details").append(
 			$("<div>")
+				.hide()
 				.addClass("doi-frame")
 				.append(
 					$("<div>")
-						.addClass("doi-id")
-						.text(p.id)
+						.addClass("doi-index")
+						.text(p.index)
 				).append(
 					$("<img>")
 						.addClass("doi-image")
-						.attr("src", p.url)
+						.attr("src", "./historic_photos/"+p.name+".jpg")
 				).append(
 					$("<div>")
 						.addClass("doi-title")
@@ -196,8 +224,8 @@ function pickRoute(d) {
 				).append(
 					$("<div>")
 						.css("clear", "both")
-				)
-		);
+				).fadeIn(1000)
+		)
 	});
 }
 
