@@ -6,6 +6,7 @@
 		<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
 		<script type="text/javascript" src="js/jquery-ui-1.8.20.custom.min.js"></script>
 		<script type="text/javascript" src="js/d3.v2.js"></script>
+		<script type="text/javascript" src="govhack.js"></script>
 	</head>
 	<body>
 		<div id="body">
@@ -54,7 +55,10 @@ var states = transforming.append("g")
 var routes = transforming.append("g")
     .attr("id", "routes");
 
-d3.json("act-suburbs.json", function(json) {
+var markers = transforming.append("g")
+    .attr("id", "markers");
+
+d3.json("data/act-suburbs.json", function(json) {
   states.selectAll("path")
       .data(json.features)
     .enter().append("path")
@@ -62,7 +66,8 @@ d3.json("act-suburbs.json", function(json) {
       .on("click", suburbClick);
 });
 
-d3.json("bus-routes.json", function(json) {
+d3.json("data/bus-routes.json", function(json) {
+// d3.json("data/output.json", function(json) {
   routes.selectAll("path")
       .data(json.features)
     .enter().append("path")
@@ -74,8 +79,11 @@ d3.json("bus-routes.json", function(json) {
 var poi;
 var poiLookup;
 
-d3.json("points-of-interest.json", function(json) {
+d3.json("data/poi.json", function(json) {
 	poi = json;
+});
+d3.json("data/poi-lookup.json", function(json) {
+	poiLookup = json;
 });
 
 function suburbClick(d) {
@@ -99,8 +107,60 @@ function suburbClick(d) {
       .style("stroke-width", 1.5 / k + "px");
 }
 
+/*
+ * @arg max		Maximum return value, not inclusive
+ */
+function randInt(max) {
+	return Math.floor(Math.random()*max);
+}
+
 function pickRoute(d) {
 	$("#route-title").text("Route "+d.properties.name);
+	
+	// look up a list of applicable POI ids
+	// make a list of applicable IDs for each segment
+	var poisPerSeg = [];
+	$(poiLookup).each(function(index, val) {
+		if(val.route_id == d.properties.name) {
+			var seg = val.segment-1;
+			if(poisPerSeg[seg] == undefined)
+				poisPerSeg[seg] = [];
+			poisPerSeg[seg].push(val.barcode);
+		}
+	});
+	// pick an ID for each segment
+	var poiIDs = [];
+	$(poisPerSeg).each(function(index, segIDs) {
+		poiIDs.push(segIDs[randInt(segIDs.length)]);
+	});
+	var selectedPOIs = [];
+	// get the POI data
+	$(poiIDs).each(function(i, id) {
+		var nextPOI = poi[id];
+		// transform into our coordinate space
+		nextPOI.coordinates = projection(nextPOI.coordinates);
+		nextPOI.id = i+1;
+		selectedPOIs.push(nextPOI);
+	});
+	
+	// clear the previous markers
+	$("#markers").children().remove();
+	// draw the points on the map
+	markers.data(selectedPOIs)
+		.append("circle")
+	        .attr("cx", function(d) { return d.coordinates[0]; })
+	        .attr("cy", function(d) { return d.coordinates[1]; })
+	        .attr("r", 10);
+	markers.data(selectedPOIs)
+		.append("text")
+	        .attr("x", function(d) { return d.coordinates[0]; })
+	        .attr("y", function(d) { return d.coordinates[1]; })
+			.attr("transform", function(d) { 
+				// a dirty fix to handle the bad placement of text
+				return (d.id < 10) ? "translate(-4,5)" : "translate(-9,5)";
+			}).text(function(d) { return d.id; });
+	
+	// draw the details on the left
 }
 
 </script>

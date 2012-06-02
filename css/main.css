@@ -4,7 +4,7 @@
 }
 
 body {
-	background-image:url('images/background.jpg');
+	background-image:url('../images/background.jpg');
 /*	opacity:0.5;*/
 }
 
@@ -23,8 +23,8 @@ body, th, td {
 }
 
 .background {
-  fill: none;
-  pointer-events: all;
+	fill: none;
+	pointer-events: all;
 }
 
 svg {
@@ -34,28 +34,33 @@ svg {
 }
 
 #states {
-  fill: rgba(128,128,128, 0.8);
-  stroke: #ddd;
-  stroke-width: 1px;
+	fill: rgba(128,128,128, 0.8);
+	stroke: #ddd;
+	stroke-width: 1px;
 }
 
 #states path:hover {
-  stroke: white;
+	stroke: white;
 }
 
 #routes path {
-  stroke: #f00;
-  fill:none;
-  stroke-width: 1.5px;
+	stroke: #f00;
+	fill:none;
+	stroke-width: 1.5px;
 }
 
 #routes path:hover {
-  stroke-width: 4px;
-  -webkit-box-shadow: 0px 0px 5px #fff;
+	stroke-width: 4px;
+	-webkit-box-shadow: 0px 0px 5px #fff;
 }
 
 #route-title {
 	padding:40px;
 	font-size:250%;
 	text-shadow: -1px -1px rgba(0,0,0,0.1), 1px 1px rgba(255,255,255,0.4);
+}
+
+#markers circle {
+	fill: orange;
+	color: white;
 }
