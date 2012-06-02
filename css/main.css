@@ -72,20 +72,24 @@ svg {
 
 .doi-frame {
 	width:500px;
-	position:relative;
 }
 
 .doi-id {
 	width:50px;
 	height:50px;
 	border-radius:25px;
-	background:25px;
+	background:orange;
 	color:white;
-	font-weight:bold;
+	float:left;
+	box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+	text-align: center;
+	line-height: 50px;
+	font-size: 200%;
 }
 
 .doi-image {
 	width:100px;
+	padding-left:10px;
 	float:left;
 }
 
