@@ -8,10 +8,10 @@ body {
 /*	opacity:0.5;*/
 }
 
-body, th, td {
-	font-family:"Helvetica Neue";
-	font-weight:lighter;
-	color:#333;
+body, th, td, .ui-button, .ui-widget {
+	font-family:"Helvetica Neue" !important;
+	font-weight:lighter !important;
+	color:#333 !important;
 }
 
 #body {
@@ -20,6 +20,15 @@ body, th, td {
 	background-color:#aaa;
 	opacity:0.97;
 	position:relative;
+}
+
+#year-picker-frame {
+	position:fixed;
+/*	width:100%;
+	text-align:center;*/
+	bottom:40px;
+	left:40px;
+	z-index:2;
 }
 
 .background {
@@ -35,18 +44,17 @@ svg {
 
 #states {
 	fill: rgba(128,128,128, 0.8);
-	stroke: #ddd;
-	stroke-width: 1px;
+	stroke: #aaa;
+	stroke-width: 0.5px;
 }
 
 #states path:hover {
-	stroke: white;
+	fill: rgba(128,200,80, 0.9);
 }
 
 #routes path {
-	stroke: #f00;
 	fill:none;
-	stroke-width: 1.5px;
+	stroke-width: 1px;
 }
 
 #routes path:hover {

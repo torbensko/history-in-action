@@ -2,16 +2,28 @@
 	<head>
 		<meta charset="utf-8">
 		<link rel="stylesheet" type="text/css" href="css/main.css" media="screen" />
-		<link rel="stylesheet" type="text/css" href="css/pepper-grinder/jquery-ui-1.8.20.custom.css" media="screen" />
+		<link rel="stylesheet" type="text/css" href="css/custom-theme/jquery-ui-1.8.20.custom.css" media="screen" />
 		<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
 		<script type="text/javascript" src="js/jquery-ui-1.8.20.custom.min.js"></script>
 		<script type="text/javascript" src="js/d3.v2.js"></script>
-		<script type="text/javascript" src="govhack.js"></script>
+		<script type="text/javascript" src="js/govhack.js"></script>
 	</head>
 	<body>
 		<div id="body">
 			<div id="route-title">Explore Canberra</div>
 			<div id="poi-details"></div>
+			<div id="year-picker-frame">
+				<div id="year-picker">
+					<input type="radio" id="y1" name="years" value="0" checked="checked"/><label for="y1">All</label>
+					<input type="radio" id="y2" name="years" value="2000" /><label for="y2">2000's</label>
+					<input type="radio" id="y3" name="years" value="1990" /><label for="y3">1990's</label>
+					<input type="radio" id="y4" name="years" value="1980" /><label for="y4">1980's</label>
+					<input type="radio" id="y5" name="years" value="1970" /><label for="y5">1970's</label>
+					<input type="radio" id="y6" name="years" value="1960" /><label for="y6">1960's</label>
+					<input type="radio" id="y7" name="years" value="1950" /><label for="y7">1950's</label>
+					<input type="radio" id="y8" name="years" value="-1" /><label for="y8">pre 1950's</label>
+				</div>
+			</div>
 		</div>
 		
 <script>
@@ -74,6 +86,7 @@ d3.json("data/bus-routes.json", function(json) {
     .enter().append("path")
       .attr("d", path)
       .attr("name", function(d) { return d.properties.name; })
+      .attr("stroke", function(d) { return "rgb("+randInt(255)+","+randInt(255)+","+randInt(255)+")"; })
       .on("click", pickRoute);
 });
 
