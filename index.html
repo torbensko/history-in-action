@@ -13,8 +13,12 @@
 			<div id="title">History<span style="font-size:60%">-in-</span><b>ACTION</b></div>
 			<div id="subtitle">Come celebrate Canberra's rich history!</div>
 			
-			<div id="route-title">Click a bus route or suburb to explore...</div>
-			<div id="poi-details"></div>
+			<div id="route-title-frame">
+				<span id="route-title">Click a bus route or suburb to explore...</span>
+			</div>
+			<div id="poi-details-frame">
+				<div id="poi-details"></div>
+			</div>
 			<div id="year-picker-frame">
 				<div id="year-picker">
 					<input type="radio" id="y1" name="years" value="0" checked="checked"/><label for="y1">All</label>
@@ -43,7 +47,7 @@ var width = $('body').width(),
 
 var projection = d3.geo.azimuthal()
     .scale(120000)
-    .origin([149.24, -35.44])
+    .origin([149.22, -35.44])
     .mode("orthographic");
     // .translate([200, -100]);
 
@@ -111,24 +115,24 @@ d3.json("data/poi-lookup.json", function(json) {
 });
 
 function suburbClick(d) {
-  var x = 0,
-      y = 0,
-      k = 1;
+	var x = 0,
+	y = 0,
+	k = 1;
 
-  if(d && centered !== d) {
-    var centroid = path.centroid(d);
-    x = -centroid[0];
-    y = -centroid[1];
-    k = 2;
-    centered = d;
-  } else {
-    centered = null;
-  }
+	if(d && centered !== d) {
+		var centroid = path.centroid(d);
+		x = -centroid[0];
+		y = -centroid[1];
+		k = 2;
+		centered = d;
+	} else {
+		centered = null;
+	}
 
-  transforming.transition()
-      .duration(1000)
-      .attr("transform", "scale(" + k + ")translate(" + x + "," + y + ")")
-      .style("stroke-width", 1.5 / k + "px");
+	transforming.transition()
+			.duration(1000)
+			.attr("transform", "scale(" + k + ")translate("+x/3+","+y+")")
+			.style("stroke-width", 1.5 / k + "px");
 }
 
 /*

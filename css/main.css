@@ -93,14 +93,22 @@ svg {
 
 
 #route-title, #poi-details {
-	z-index:10;
+	z-index:2;
+	position:absolute;
 }
 
-#route-title {
-	height:40px;
-	padding:10px 0 0 10px;
+#route-title-frame {
+	top:180px;
+	height:50px;
 	font-size:150%;
 	background: -webkit-linear-gradient(left, rgba(0,0,0,0.3) 0%,rgba(0,0,0,0) 100%); /* Chrome10+,Safari5.1+ */
+}
+#route-title {
+	padding:10px 0 0 10px;
+}
+
+#poi-details-frame {
+	top:230px;
 }
 
 #poi-details {
