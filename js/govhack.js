@@ -19,13 +19,15 @@ $(function() {
 	
 	// make the content scrollable
 	$("#poi-clickers").children().eq(0).click(function() {
+		var topScroll = Math.max(0, $("#poi-details").scrollTop() - 60);
+		console.log(topScroll);
 		$("#poi-details").animate({
-		    scrollTop: 0
+		    scrollTop: topScroll
 		});
 	});
 	$("#poi-clickers").children().eq(1).click(function() {
 		$("#poi-details").animate({
-		    scrollTop: $("#poi-details").offset().top + 60
+		    scrollTop: $("#poi-details").scrollTop() + 60
 		});
 	});
 	
