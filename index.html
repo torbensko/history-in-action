@@ -168,8 +168,8 @@ function pickRoute(d) {
 	performPOISelection(true);
 }
 
-var step = 10;
-var separtion = 30;
+var step = 5;
+var separtion = 10;
 	
 // keep offsetting x until it doesn't clash with something in ary
 var resolve = function(x, ary, positive) {
@@ -185,8 +185,6 @@ var resolve = function(x, ary, positive) {
 	}
 	return x;
 };
-
-var pointsPerRoute = 10;
 
 var idOffset = 0;
 function performPOISelection(forceClear) {
@@ -295,27 +293,33 @@ function performPOISelection(forceClear) {
 			[x-resolve(x, xs, randInt(2) == 0), y-resolve(y, ys, randInt(2) == 0)] : [0,0];
 	};
 	
+	console.log(selectedPOIs);
+	
 	// draw the points on the map
-	markers.data(selectedPOIs)
-		.append("circle")
-	        .attr("cx", function(d) { 
-				var offsets = shuffleDots(d.coordinates[0], d.coordinates[1]);
-				d.coordinates[0] += offsets[0];
-				d.coordinates[1] += offsets[1];
-				return d.coordinates[0]; 
-			}).attr("cy", function(d) { return d.coordinates[1]; })
-	        .attr("r", 15);
+	for(pi in selectedPOIs) {
+		markers
+			.data([selectedPOIs[pi]])
+			.append("circle")
+		        .attr("cx", function(d) { 
+					var offsets = shuffleDots(d.coordinates[0], d.coordinates[1]);
+					d.coordinates[0] += offsets[0];
+					d.coordinates[1] += offsets[1];
+					return d.coordinates[0]; 
+				}).attr("cy", function(d) { return d.coordinates[1]; })
+		        .attr("r", 15);
 
-	markers.data(selectedPOIs)
-		.append("text")
-	        .attr("x", function(d) { 
-				return d.coordinates[0]; 
-			}).attr("y", function(d) {
-				return d.coordinates[1];
-			}).attr("transform", function(d) { 
-				// a dirty fix to handle the bad placement of text
-				return (d.index < 10) ? "translate(-4,5)" : "translate(-9,5)";
-			}).text(function(d) { return d.index; });
+		markers
+			.data([selectedPOIs[pi]])
+			.append("text")
+		        .attr("x", function(d) { 
+					return d.coordinates[0]; 
+				}).attr("y", function(d) {
+					return d.coordinates[1];
+				}).attr("transform", function(d) { 
+					// a dirty fix to handle the bad placement of text
+					return (d.index < 10) ? "translate(-4,5)" : "translate(-9,5)";
+				}).text(function(d) { return d.index; });
+	}
 	
 	// draw the details on the left
 	$(selectedPOIs).each(function(i, p) {
