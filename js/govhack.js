@@ -17,6 +17,18 @@ $(function() {
 	
 	// $("#poi-details").jScrollPane();
 	
+	// make the content scrollable
+	$("#poi-clickers").children().eq(0).click(function() {
+		$("#poi-details").animate({
+		    scrollTop: 0
+		});
+	});
+	$("#poi-clickers").children().eq(1).click(function() {
+		$("#poi-details").animate({
+		    scrollTop: $("#poi-details").offset().top + 60
+		});
+	});
+	
 	var idleCheck = function() {
 		// if nothing is selected, grab a new image in order to keep the home page interesting
 		if(selectedSuburb == false && selectedRoute == false)

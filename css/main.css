@@ -128,10 +128,34 @@ svg {
 
 #poi-details {
 	position:relative;
-	padding:5px 0 10px 5px;
+	padding:5px 0 10px 60px;
 	overflow:hidden;
 	height:370px;
 /*	overflow-y:scroll;*/
+}
+.scrollers {
+	opacity:0.5;
+	background:#666;
+	width:60px;
+	height:60px;
+	border-radius:30px;
+	z-index:10;
+	cursor:hand;
+}
+#poi-clickers {
+	position:absolute;
+	top:0px;
+	left:0px;
+}
+#poi-clickers .scrollers:first-child {
+	position:absolute;
+	top:60px;
+	left:5px;
+}
+#poi-clickers .scrollers:nth-child(2) {
+	position:absolute;
+	top:200px;
+	left:5px;
 }
 
 .jspVerticalBar {
@@ -139,7 +163,7 @@ svg {
 }
 
 .doi-frame {
-	width:600px;
+	width:540px;
 	padding:10px;
 }
 
