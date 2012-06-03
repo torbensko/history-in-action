@@ -186,6 +186,8 @@ var resolve = function(x, ary, positive) {
 	return x;
 };
 
+var pointsPerRoute = 10;
+
 var idOffset = 0;
 function performPOISelection(forceClear) {
 	var clear = true;
@@ -203,21 +205,25 @@ function performPOISelection(forceClear) {
 		$("#route-title").text("Events along route "+selectedRoute);
 	
 		// make a list of applicable IDs for each segment
-		var poisPerSeg = [];
+		var poisPerSeg = new Object();
 		$(poiLookup).each(function(index, val) {
-			if(val.name == selectedRoute && 
+			if(val.route == selectedRoute && 
 					val.year >= yearFilterMin && val.year <= yearFilterMax) {
 						
 				var seg = val.postcode;
 				if(poisPerSeg[seg] == undefined)
-					poisPerSeg[seg] = [];
-				poisPerSeg[seg].push(val.barcode);
+					poisPerSeg[seg] = [val.barcode];
+				else
+					poisPerSeg[seg].push(val.barcode);
 			}
-		}); 
-		// pick an ID for each segment	
-		$(poisPerSeg).each(function(index, segIDs) {
-			poiIDs.push(segIDs[randInt(segIDs.length)]);
 		});
+		
+		// pick an ID for each segment	
+		// $(poisPerSeg).each(function(index, segIDs) {
+		for(pc in poisPerSeg) {
+			var pcIDs = poisPerSeg[pc];
+			poiIDs.push(pcIDs[randInt(pcIDs.length)]);
+		}
 		
 	// otherwise, must be idle
 	} else {
