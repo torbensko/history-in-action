@@ -1,3 +1,5 @@
+var SCROLL_SIZE = 120;
+
 $(function() {
 	$("#year-picker input").click(function() {
 		yearFilterMin = $("#year-picker input:radio:checked").val();
@@ -19,15 +21,14 @@ $(function() {
 	
 	// make the content scrollable
 	$("#poi-clickers").children().eq(0).click(function() {
-		var topScroll = Math.max(0, $("#poi-details").scrollTop() - 60);
-		console.log(topScroll);
+		var topScroll = Math.max(0, $("#poi-details").scrollTop() - SCROLL_SIZE);
 		$("#poi-details").animate({
 		    scrollTop: topScroll
 		});
 	});
 	$("#poi-clickers").children().eq(1).click(function() {
 		$("#poi-details").animate({
-		    scrollTop: $("#poi-details").scrollTop() + 60
+		    scrollTop: $("#poi-details").scrollTop() + SCROLL_SIZE
 		});
 	});
 	
