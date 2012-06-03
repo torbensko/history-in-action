@@ -39,5 +39,14 @@ $(function() {
 		setTimeout(idleCheck, 3000);
 	};
 	idleCheck();
+
+	// for testing:
+	// setTimeout(function() {
+	// 	performPOISelection();
+	// 	performPOISelection();
+	// 	performPOISelection();
+	// 	performPOISelection();
+	// 	performPOISelection();
+	// }, 3000);
 	
 });
