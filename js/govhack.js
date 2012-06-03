@@ -15,6 +15,8 @@ $(function() {
 	});
 	$("#year-picker").buttonset();
 	
+	// $("#poi-details").jScrollPane();
+	
 	var idleCheck = function() {
 		// if nothing is selected, grab a new image in order to keep the home page interesting
 		if(selectedSuburb == false && selectedRoute == false)

@@ -9,7 +9,8 @@ body {
 }
 
 body, th, td, .ui-button, .ui-widget {
-	font-family:"Helvetica Neue" !important;
+/*	font-family:'Raleway', cursive !important;*/
+	font-family: 'Open Sans', sans-serif !important;
 	font-weight:lighter !important;
 	color:#333 !important;
 }
@@ -81,9 +82,10 @@ svg {
 	text-shadow: -1px -1px rgba(0,0,0,0.2), 1px 1px rgba(255,255,255,0.6);
 }
 #subtitle {
-	padding:2px 0 40px 60px;
-	font-size:120%;
-	font-family:"Century Gothic";
+	padding:0px 0 40px 60px;
+	font-size:160%;
+/*	font-family:"Century Gothic";*/
+	font-family: 'Annie Use Your Telescope', cursive;
 }
 
 #markers circle {
@@ -100,28 +102,44 @@ svg {
 }
 
 #route-title-frame {
-	top:180px;
-	height:50px;
-	font-size:150%;
-	background: -webkit-linear-gradient(left, rgba(0,0,0,0.3) 0%,rgba(0,0,0,0) 100%); /* Chrome10+,Safari5.1+ */
+	top: 180px;
+	height: 50px;
+	font-size: 150%;
+	background: -webkit-linear-gradient(left, rgba(0, 0, 0, 0.3) 0%,transparent 100%);
+	position: absolute;
+	width: 660px;
+	left: 0px;
 }
 #route-title {
-	padding:10px 0 0 10px;
+	position:relative;
+	padding: 10px 0 0 10px;
+	height: 50px;
+	top: 8px;
+	left: 20px;
 }
 
+
 #poi-details-frame {
+	position:absolute;
 	top:230px;
+	width:660px;
+	background: -webkit-linear-gradient(left, rgba(0,0,0,0.2) 0%,rgba(0,0,0,0) 100%); /* Chrome10+,Safari5.1+ */	
 }
 
 #poi-details {
+	position:relative;
 	padding:5px 0 10px 5px;
-	height:400px;
-	overflow-y:scroll;
-	background: -webkit-linear-gradient(left, rgba(0,0,0,0.2) 0%,rgba(0,0,0,0) 100%); /* Chrome10+,Safari5.1+ */
+	overflow:hidden;
+	height:370px;
+/*	overflow-y:scroll;*/
+}
+
+.jspVerticalBar {
+	left: 0;
 }
 
 .doi-frame {
-	width:500px;
+	width:600px;
 	padding:10px;
 }
 
