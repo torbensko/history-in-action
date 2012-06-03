@@ -298,7 +298,7 @@ function performPOISelection(forceClear) {
 				d.coordinates[1] += offsets[1];
 				return d.coordinates[0]; 
 			}).attr("cy", function(d) { return d.coordinates[1]; })
-	        .attr("r", 10);
+	        .attr("r", 15);
 
 	markers.data(selectedPOIs)
 		.append("text")
