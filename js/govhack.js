@@ -2,17 +2,18 @@ var SCROLL_SIZE = 120;
 
 $(function() {
 	$("#year-picker input").click(function() {
-		yearFilterMin = $("#year-picker input:radio:checked").val();
-		
-		if(yearFilterMin == "all") {
+		var val = $("#year-picker input:radio:checked").val();
+		if(val == "all") {
 			yearFilterMax = 2020;
 			yearFilterMin = 0;
-		} else if(yearFilterMin == "pre") {
+		} else if(val == "pre") {
 			yearFilterMax = 1949;
 			yearFilterMin = 0;
 		} else {
+			yearFilterMin = parseInt(val);
 			yearFilterMax = yearFilterMin + 9;
 		}
+		console.log(yearFilterMin+" "+yearFilterMax);
 		performPOISelection(true);
 	});
 	$("#year-picker").buttonset();

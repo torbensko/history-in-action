@@ -92,6 +92,7 @@ var routes = transforming.append("g")
 
 var markers = transforming.append("g")
     .attr("id", "markers");
+    // .attr("transform", "translate(-60,-35)");
 
 var suburbs;
 // var subIndex = 0;
@@ -278,6 +279,9 @@ function performPOISelection(forceClear) {
 	
 	if(!(poiIDs != undefined && poiIDs.length > 0))
 		return;
+		
+	if(poi == undefined)
+		return;
 
 	var selectedPOIs = [];
 	// get the POI data
@@ -355,7 +359,7 @@ function performPOISelection(forceClear) {
 				).append(
 					$("<div>")
 						.addClass("doi-title")
-						.text(p.title)
+						.text(p.year+": "+p.title)
 				).append(
 					$("<div>")
 						.css("clear", "both")
