@@ -187,10 +187,10 @@ function performPOISelection(forceClear) {
 		// make a list of applicable IDs for each segment
 		var poisPerSeg = [];
 		$(poiLookup).each(function(index, val) {
-			if(val.route_id == selectedRoute && 
+			if(val.name == selectedRoute && 
 					val.year >= yearFilterMin && val.year <= yearFilterMax) {
 						
-				var seg = val.segment-1;
+				var seg = val.postcode;
 				if(poisPerSeg[seg] == undefined)
 					poisPerSeg[seg] = [];
 				poisPerSeg[seg].push(val.barcode);
