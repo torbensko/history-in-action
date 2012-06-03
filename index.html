@@ -93,12 +93,16 @@ var routes = transforming.append("g")
 var markers = transforming.append("g")
     .attr("id", "markers");
 
+var suburbs;
+// var subIndex = 0;
 d3.json("data/act-suburbs.json", function(json) {
-  states.selectAll("path")
-      .data(json.features)
-    .enter().append("path")
-      .attr("d", path)
-      .on("click", suburbClick);
+	suburbs = json;
+	states.selectAll("path")
+		.data(json.features)
+		// .attr("suburb-id", function(d) { return subIndex; })
+		.enter().append("path")
+		.attr("d", path)
+		.on("click", suburbClick);
 });
 
 d3.json("data/bus-routes.json", function(json) {
@@ -122,8 +126,10 @@ d3.json("data/poi-lookup.json", function(json) {
 	poiLookup = json;
 });
 
-var selectedSuburb = false;
 var selectedRoute = false;
+var selectedSuburb = false;
+var selectedSuburbName = "";
+
 var yearFilterMin = 0;
 var yearFilterMax = 2020;
 
@@ -133,6 +139,7 @@ function suburbClick(d) {
 	k = 1;
 	
 	selectedSuburb = false;
+	selectedSuburbName = "";
 	selectedRoute = false;
 
 	if(d && centered !== d) {
@@ -142,7 +149,10 @@ function suburbClick(d) {
 		k = 2;
 		centered = d;
 		// to do: get a real index
-		selectedSuburb = 2902;
+		if(d.properties.postcode != undefined) {
+			selectedSuburb = d.properties.postcode;
+			selectedSuburbName = d.properties.name;
+		}
 	
 	} else {
 		centered = null;
@@ -187,6 +197,7 @@ var resolve = function(x, ary, positive) {
 };
 
 var idOffset = 0;
+var suburbPoints = 5;
 function performPOISelection(forceClear) {
 	var clear = true;
 	
@@ -195,9 +206,17 @@ function performPOISelection(forceClear) {
 	
 	// is a suburb chosen?
 	if(selectedSuburb != false) {
-		$("#route-title").text("Events that occurred in BLAH");
-		// to do: grab some suburb events and show them
-		poiIDs = [78147];
+		$("#route-title").text("Events that occurred in "+selectedSuburbName);
+	
+		var suburbPOIs = [];
+		$(poiLookup).each(function(index, val) {
+			if(val.postcode == selectedSuburb && 
+					val.year >= yearFilterMin && val.year <= yearFilterMax) {
+				suburbPOIs.push(val.barcode);
+			}
+		});
+		for(var i = 0; i < suburbPoints; i++)
+			poiIDs.push(suburbPOIs[randInt(suburbPOIs.length)]);
 		
 	} else if(selectedRoute != false) {
 		$("#route-title").text("Events along route "+selectedRoute);
@@ -292,8 +311,6 @@ function performPOISelection(forceClear) {
 		return (xs.length > 0) ?
 			[x-resolve(x, xs, randInt(2) == 0), y-resolve(y, ys, randInt(2) == 0)] : [0,0];
 	};
-	
-	console.log(selectedPOIs);
 	
 	// draw the points on the map
 	for(pi in selectedPOIs) {
